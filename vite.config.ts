@@ -11,6 +11,7 @@ export default defineConfig({
         ref: true,
         svgo: false,
         titleProp: true,
+        exportType: "named",
       },
       include: "**/*.svg",
     }),

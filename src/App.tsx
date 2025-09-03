@@ -1,12 +1,18 @@
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import "./App.scss";
+import DefaultLayout from "./layout/DefaultLayout";
+import { HomePage } from "./pages/Home";
 
 function App() {
   return (
-    <>
-      <div>
-        <span>TEST</span>
-      </div>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<DefaultLayout />}>
+          <Route index element={<HomePage />}></Route>
+          <Route></Route>
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 

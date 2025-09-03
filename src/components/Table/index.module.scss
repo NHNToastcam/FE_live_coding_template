@@ -1,0 +1,88 @@
+@use "@/styles/variant";
+
+.wrapper {
+  position: relative;
+}
+
+.tableContainer {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  border: 1px solid #cecece;
+  overflow: hidden;
+
+  thead {
+    background-color: variant.$gray-100;
+    border: none;
+  }
+
+  th,
+  td {
+    padding: 20px 12px;
+    text-align: center;
+    border: 1px solid variant.$gray-300;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    border: none;
+  }
+
+  td {
+    border-bottom: 1px solid #ddd;
+  }
+
+  .header {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .sortable {
+    color: #0070f3;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .sortIndicator {
+    margin-left: 5px;
+    font-size: 12px;
+  }
+
+  tbody tr:hover {
+    background-color: variant.$gray-200;
+  }
+
+  .cell {
+    font-weight: 400;
+    text-align: center;
+  }
+}
+
+.wrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 24px; // ← 그라데이션 폭
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  background: linear-gradient(
+    to left,
+    rgba(255, 255, 255, 1),
+    rgba(255, 255, 255, 0)
+  );
+}
+
+.showFade {
+  &::after {
+    opacity: 1;
+  }
+}

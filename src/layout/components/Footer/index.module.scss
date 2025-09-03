@@ -1,0 +1,19 @@
+@use "@/styles/variant";
+
+.footerContainer {
+  padding: 20px 30px;
+  width: 100%;
+  min-width: 1300px;
+  background-color: variant.$footer-bg-color;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.companyInfoContainer {
+  display: flex;
+  flex-direction: column;
+  color: variant.$gray-400;
+  font-size: 0.9rem;
+  gap: 8px;
+}

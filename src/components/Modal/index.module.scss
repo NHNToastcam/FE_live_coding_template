@@ -1,0 +1,74 @@
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+  background-color: rgba(0, 0, 0, 0.4);
+  transition: opacity 0.15s ease-in-out;
+  &.hidden {
+    opacity: 0;
+  }
+  &.visible {
+    opacity: 1;
+  }
+}
+
+.modalContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 16rem;
+  max-width: 40rem;
+  padding: 1.5rem;
+  overflow: hidden;
+  background-color: var(--modal-bg-color, white);
+  color: var(--modal-text-color, black);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: scale(0.95);
+  transition: all 0.15s ease-in-out;
+
+  &.animating {
+    transform: scale(1);
+    opacity: 1;
+  }
+  &.not-animating {
+    opacity: 0;
+  }
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.modalCloseBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+.modalContentContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
