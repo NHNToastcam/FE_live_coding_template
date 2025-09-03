@@ -1,0 +1,63 @@
+// _breakpoints.scss
+// 1rem = 16px 기준 (em/rem 사용을 권장: 사용자 폰트 크기 변화에 유연)
+$breakpoints: (
+  mobile: 0,
+  // 기본 (모바일 퍼스트)
+  tablet: 48em,
+  // 768px
+  laptop: 64em,
+  // 1024px (소형 노트북/작은 데스크탑 시작점)
+  nb-14: 90rem,
+  // 1440px 근처 (맥북 14" 디폴트 1512px와도 근사)
+  nb-16: 108rem,
+  // 1728px 근처 (맥북 16" 디폴트 1728px)
+  desktop: 120rem,
+  // 1920px
+  wide: 160rem,
+  // 2560px
+);
+
+// 내부 헬퍼
+@function bp($name) {
+  @return map-get($breakpoints, $name);
+}
+
+// up/down/between 3종 믹스인
+@mixin up($name) {
+  $min: bp($name);
+  @if $min == null {
+    @error "Unknown breakpoint: #{$name}";
+  }
+  @media (min-width: #{$min}) {
+    @content;
+  }
+}
+
+@mixin down($name) {
+  $max: bp($name);
+  @if $max == null {
+    @error "Unknown breakpoint: #{$name}";
+  }
+  // max-width는 바로 아래 픽셀까지 포함되도록 0.02px 보정
+  @media (max-width: calc(#{$max} - 0.02px)) {
+    @content;
+  }
+}
+
+@mixin between($from, $to) {
+  $min: bp($from);
+  $max: bp($to);
+  @if $min == null or $max == null {
+    @error "Unknown breakpoint(s): #{$from}, #{$to}";
+  }
+  @media (min-width: #{$min}) and (max-width: calc(#{$max} - 0.02px)) {
+    @content;
+  }
+}
+
+// 선택: 방향(가로/세로) 보조
+@mixin orientation($value) {
+  @media (orientation: #{$value}) {
+    @content;
+  }
+}
