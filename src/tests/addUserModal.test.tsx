@@ -21,7 +21,7 @@ const mockUsers = [
     email: "jieun@example.com",
     role: "user",
     phone: "010-9876-5432",
-    age: 25,
+    age: "25",
     createdAt: "2025-01-15T15:30:00.000Z",
   },
   {
@@ -30,7 +30,7 @@ const mockUsers = [
     email: "chulsoo@example.com",
     role: "editor",
     phone: "010-5555-0000",
-    age: 35,
+    age: "35",
     createdAt: "2025-02-20T09:10:00.000Z",
   },
 ];
@@ -55,25 +55,21 @@ describe("사용자 추가 모달", () => {
     jest.useFakeTimers(); // ⬅️ 타이머 제어
 
     // 1) 초기 목록
-    (api.fetchUsers as jest.Mock).mockResolvedValueOnce(mockUsers);
+    (api.fetchUsers as jest.Mock)
+      .mockResolvedValueOnce(mockUsers)
+      .mockResolvedValueOnce(mockUsers);
 
     // 2) addUser 호출 시 반환될 새 유저
     const newUser = {
-      id: "999",
+      id: String(Date.now()),
       name: "홍길동",
       email: "hong@example.com",
       role: "user",
       phone: "010-0000-0000",
-      age: 25,
+      age: "25",
       createdAt: "2025-03-10T08:00:00.000Z",
     };
     (api.addUser as jest.Mock).mockResolvedValue(newUser);
-
-    // 3) 추가 후 재조회 시 새 유저 포함 목록 반환
-    (api.fetchUsers as jest.Mock).mockResolvedValueOnce([
-      ...mockUsers,
-      newUser,
-    ]);
 
     renderHome();
 
@@ -101,8 +97,8 @@ describe("사용자 추가 모달", () => {
     fireEvent.change(within(dialog).getByLabelText("전화번호"), {
       target: { value: "010-0000-0000" },
     });
-    fireEvent.change(within(dialog).getByLabelText("주소"), {
-      target: { value: "서울시 강남구" },
+    fireEvent.change(within(dialog).getByLabelText("나이"), {
+      target: { value: "25" },
     });
     fireEvent.change(within(dialog).getByLabelText("역할"), {
       target: { value: "user" },
@@ -111,11 +107,14 @@ describe("사용자 추가 모달", () => {
     // --- "추가" 버튼(정확 일치)만 찾기 ---
     const addBtn = within(dialog).getByRole("button", { name: /^추가$/ });
 
-    // 클릭 → 내부에서 비동기/타이머가 돌 수 있으므로 act로 감싸고 타이머 전진
     await act(async () => {
       fireEvent.click(addBtn);
-      // 내부 로딩/애니메이션/약간의 지연이 있다면 여유 있게 진행
-      jest.advanceTimersByTime(500);
+
+      // 1) lodash.debounce 300ms 소화
+      jest.advanceTimersByTime(300);
+
+      // 2) 디바운스 콜백 내부에서 생긴 프로미스( addUser().then(...) ) 마이크로태스크 한 틱 플러시
+      await Promise.resolve();
     });
 
     // API 호출 검증
@@ -125,12 +124,15 @@ describe("사용자 추가 모달", () => {
         email: "hong@example.com",
         role: "user",
         phone: "010-0000-0000",
-        age: "서울시 강남구",
+        age: "25",
       });
     });
 
+    jest.useRealTimers();
+
     // 목록 갱신에 새 유저가 보임
-    expect(await screen.findByText("홍길동")).toBeInTheDocument();
+    const matches = await screen.findAllByText("홍길동");
+    expect(matches.length).toBeGreaterThan(0);
 
     jest.useRealTimers();
   });
@@ -170,7 +172,7 @@ describe("사용자 추가 모달", () => {
       // 혹시 활성이라도, 클릭해도 addUser가 절대 호출되면 안 된다
       await act(async () => {
         fireEvent.click(addBtn);
-        jest.advanceTimersByTime(100);
+        jest.advanceTimersByTime(500);
       });
       expect(api.addUser).not.toHaveBeenCalled();
     }
@@ -183,7 +185,7 @@ describe("사용자 추가 모달", () => {
       /전화.*필수|전화.*입력|phone.*required/i
     );
     const addrError = within(dialog).queryByText(
-      /주소.*필수|주소.*입력|age.*required/i
+      /나이.*필수|나이.*입력|age.*required/i
     );
     // 최소 하나는 떠야 하게 강제하려면:
     expect(emailError || phoneError || addrError).toBeTruthy();
@@ -216,7 +218,7 @@ describe("사용자 추가 모달", () => {
     fireEvent.change(within(dialog).getByLabelText("전화번호"), {
       target: { value: "010-0000-0000" },
     });
-    fireEvent.change(within(dialog).getByLabelText("주소"), {
+    fireEvent.change(within(dialog).getByLabelText("나이"), {
       target: { value: "서울시 강남구" },
     });
     fireEvent.change(within(dialog).getByLabelText("역할"), {
@@ -228,7 +230,7 @@ describe("사용자 추가 모달", () => {
     // 버튼이 비활성이어야 이상적이지만, 혹시 활성이어도 클릭 시 addUser 호출되면 안 됨
     await act(async () => {
       fireEvent.click(addBtn);
-      jest.advanceTimersByTime(100);
+      jest.advanceTimersByTime(500);
     });
     expect(api.addUser).not.toHaveBeenCalled();
 

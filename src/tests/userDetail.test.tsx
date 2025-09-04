@@ -12,7 +12,7 @@ const user = {
   email: "chulsoo@example.com",
   role: "editor",
   phone: "010-5555-0000",
-  age: 30,
+  age: "30",
   createdAt: "2025-02-20T09:10:00.000Z",
 };
 
@@ -36,7 +36,7 @@ describe("User Detail Page", () => {
     expect(screen.getByText("chulsoo@example.com")).toBeInTheDocument();
     expect(screen.getByText(/editor/i)).toBeInTheDocument();
     expect(screen.getByText("010-5555-0000")).toBeInTheDocument();
-    expect(screen.getByText(/판교로 789/)).toBeInTheDocument();
+    expect(screen.getByText(/30/)).toBeInTheDocument();
   });
 
   test("뒤로가기 버튼을 렌더링한다", async () => {

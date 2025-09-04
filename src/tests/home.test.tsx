@@ -22,7 +22,7 @@ const mockUsers = [
     email: "jieun@example.com",
     role: "user",
     phone: "010-9876-5432",
-    age: 25,
+    age: "25",
     createdAt: "2025-01-15T15:30:00.000Z",
   },
   {
@@ -31,7 +31,7 @@ const mockUsers = [
     email: "chulsoo@example.com",
     role: "editor",
     phone: "010-5555-0000",
-    age: 35,
+    age: "35",
     createdAt: "2025-02-20T09:10:00.000Z",
   },
 ];
@@ -68,7 +68,7 @@ describe("Home Page - 사용자 목록/검색/추가/삭제/모달", () => {
     expect(screen.queryByTestId("spinner")).not.toBeInTheDocument();
   });
 
-  test("테이블 컬럼과 데이터가 표시된다 (이름/이메일/전화/주소/가입일)", async () => {
+  test("테이블 컬럼과 데이터가 표시된다 (이름/이메일/전화/나이/가입일)", async () => {
     (api.fetchUsers as jest.Mock).mockResolvedValue(mockUsers);
     renderHome();
 
@@ -76,7 +76,7 @@ describe("Home Page - 사용자 목록/검색/추가/삭제/모달", () => {
     expect(await screen.findByText("이름")).toBeInTheDocument();
     expect(screen.getByText("이메일")).toBeInTheDocument();
     expect(screen.getByText("전화번호")).toBeInTheDocument();
-    expect(screen.getByText("주소")).toBeInTheDocument();
+    expect(screen.getByText("나이")).toBeInTheDocument();
     expect(screen.getByText("가입일")).toBeInTheDocument();
 
     // 데이터 일부

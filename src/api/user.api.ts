@@ -30,8 +30,8 @@ export async function addUser(
     id: String(Date.now()),
     createdAt: new Date().toISOString(),
   };
-  DB.users.push(newUser); // DB 변경
-  return deepClone(newUser); // 직렬화 경계 통과
+  DB.users.push(newUser);
+  return deepClone(newUser);
 }
 
 /* GET: 이름/이메일로 검색 — DB에서 select, 복사본 반환 */
