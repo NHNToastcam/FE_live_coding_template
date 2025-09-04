@@ -32,24 +32,28 @@
 
 - 사용자 이름, 이메일로 **실시간 검색 가능**
 - 사용자 목록을 **Table**로 표시
-  - 항목: 이름, 이메일, 가입일, [상세보기], [삭제]
+  - 항목: 이름, 이메일, 전화번호, 주소, 가입일, [상세보기], [삭제]
 - **상세보기 버튼** 클릭 시 `/user/:id`로 이동
 - **삭제 버튼** 클릭 시 해당 사용자 삭제
 - **"사용자 추가" 버튼** 클릭 시 **Modal 창**으로 사용자 추가
 
 ### 2. 사용자 추가 Modal
 
-- 필드: 이름, 이메일, 가입일 (default: 오늘 날짜)
-- 유효성 검사 포함 (이메일 형식, 빈 값 체크)
+- 필드: 이름, 이메일, 전화번호, 주소, 역할, 가입일 (default: 오늘 날짜)
+  - 역할은 `select`로 `User`,`Editor`,`Admin`으로 구현
+- 유효성 검사 포함 (이메일 형식, 빈 값 체크 등)
 - 추가 시 상태에 반영되고 목록 갱신
 
 ### 3. 사용자 상세 페이지 (`/user/:id`)
 
 - 사용자 ID를 기반으로 정보 조회
-- 상태에서 해당 사용자 정보를 찾아 보여줌
-- 정보:
+- /src/data/mockUser.ts 해당 사용자 정보를 찾아 보여줌
+- 표시 정보:
   - 이름
   - 이메일
+  - 전화번호
+  - 주소
+  - 역할
   - 가입일
 - 뒤로가기 버튼 (`/`로 이동)
 
@@ -65,26 +69,23 @@
 
 ---
 
-## 🧪 테스트 요구사항
-
-- 사용자 추가 로직에 대한 테스트 1개 이상
-- Zustand 상태 로직 테스트 (선택)
-
----
-
 ## 📁 폴더 구조 예시
 
 ```
 src/
+├── api/
+│   └── user.api.ts             # mock fetch API
 ├── components/
 │   ├── CustomTable.tsx
 │   ├── Modal.tsx
 │   ├── SearchInput.tsx
 │   └── Spinner.tsx
+├── data/
+│   └── mockUsersData.json      # 사용자 더미 데이터 (json 기반 DB 모방)
 ├── layout/
 │   └── DefaultLayout.tsx
 │   └── components/
-│         └── Header.tsx
+│         ├── Header.tsx
 │         └── Footer.tsx
 ├── pages/
 │   ├── Home.tsx
@@ -96,6 +97,18 @@ src/
 ├── App.tsx
 └── main.tsx
 ```
+
+---
+
+## 📡 Mock API 설명
+
+### `/src/api/user.api.ts`
+
+- `fetchUsers()`: 모든 사용자 조회
+- `addUser(user: Omit<User, "id" | "createdAt">)`: 사용자 추가
+- `searchUsersByName(keyword: string)`: 이름 기준 사용자 검색
+
+> **주의**: 내부적으로 `mockUsersData.json`을 기반으로 `users` 배열을 유지하며, `setTimeout`을 통해 네트워크 지연을 모방합니다.
 
 ---
 

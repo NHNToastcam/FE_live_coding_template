@@ -1,17 +1,25 @@
-// jest.config.ts
-import type { Config } from "jest";
-
-const config: Config = {
+// jest.config.cjs
+/** @type {import('jest').Config} */
+module.exports = {
   testEnvironment: "jsdom",
-  moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
-  moduleNameMapper: {
-    "\\.(scss|sass|css)$": "identity-obj-proxy",
-  },
-  transform: {
-    "^.+\\.(ts|tsx)$": "babel-jest",
-  },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
-  testMatch: ["<rootDir>/src/**/*.test.(ts|tsx)"],
-};
+  transform: {
+    "^.+\\.(t|j)sx?$": "babel-jest",
+  },
+  moduleNameMapper: {
+    // 👇 1) 별칭 + SVG (가장 먼저!)
+    "^@/assets/.+\\.svg$": "<rootDir>/src/__mocks__/svgMock.js",
+    // 👇 2) 그 외 모든 svg
+    "\\.svg$": "<rootDir>/src/__mocks__/svgMock.js",
+    "^@/(.*)$": "<rootDir>/src/$1",
 
-export default config;
+    // 스타일/이미지
+    "\\.(css|scss|sass)$": "identity-obj-proxy",
+  },
+
+  testMatch: [
+    "<rootDir>/src/**/__tests__/**/*.[tj]s?(x)",
+    "<rootDir>/src/**/*.{spec,test}.[tj]s?(x)",
+    "<rootDir>/src/tests/**/*.[tj]s?(x)",
+  ],
+};

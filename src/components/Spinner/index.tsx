@@ -15,7 +15,11 @@ export default function Spinner({
   color = "#000",
 }: SpinnerProps) {
   return (
-    <div className={classNames(className)} style={{ color: color }}>
+    <div
+      data-testid="spinner"
+      className={classNames(className)}
+      style={{ color: color }}
+    >
       <SpinnerIcon width={width} height={height} />
     </div>
   );

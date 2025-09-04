@@ -1,0 +1,29 @@
+[
+  {
+    "id": "1",
+    "name": "이지은",
+    "email": "jieun@example.com",
+    "role": "user",
+    "phone": "010-9876-5432",
+    "address": "서울특별시 마포구 월드컵북로 456",
+    "createdAt": "2025-01-15T15:30:00.000Z"
+  },
+  {
+    "id": "2",
+    "name": "박철수",
+    "email": "chulsoo@example.com",
+    "role": "editor",
+    "phone": "010-5555-0000",
+    "address": "경기도 성남시 분당구 판교로 789",
+    "createdAt": "2025-02-20T09:10:00.000Z"
+  },
+  {
+    "id": "3",
+    "name": "최유리",
+    "email": "yuri.choi@example.com",
+    "role": "admin",
+    "phone": "010-2222-3333",
+    "address": "부산광역시 해운대구 센텀중앙로 77",
+    "createdAt": "2025-03-10T08:00:00.000Z"
+  }
+]
