@@ -1,5 +1,3 @@
-// src/tests/addUserModal.test.tsx
-import React from "react";
 import {
   render,
   screen,
@@ -23,7 +21,7 @@ const mockUsers = [
     email: "jieun@example.com",
     role: "user",
     phone: "010-9876-5432",
-    address: "서울특별시 마포구 월드컵북로 456",
+    age: 25,
     createdAt: "2025-01-15T15:30:00.000Z",
   },
   {
@@ -32,7 +30,7 @@ const mockUsers = [
     email: "chulsoo@example.com",
     role: "editor",
     phone: "010-5555-0000",
-    address: "경기도 성남시 분당구 판교로 789",
+    age: 35,
     createdAt: "2025-02-20T09:10:00.000Z",
   },
 ];
@@ -66,7 +64,7 @@ describe("사용자 추가 모달", () => {
       email: "hong@example.com",
       role: "user",
       phone: "010-0000-0000",
-      address: "서울시 강남구",
+      age: 25,
       createdAt: "2025-03-10T08:00:00.000Z",
     };
     (api.addUser as jest.Mock).mockResolvedValue(newUser);
@@ -127,12 +125,117 @@ describe("사용자 추가 모달", () => {
         email: "hong@example.com",
         role: "user",
         phone: "010-0000-0000",
-        address: "서울시 강남구",
+        age: "서울시 강남구",
       });
     });
 
     // 목록 갱신에 새 유저가 보임
     expect(await screen.findByText("홍길동")).toBeInTheDocument();
+
+    jest.useRealTimers();
+  });
+
+  test("❌ 필수값 비워두면: '추가' 클릭해도 addUser가 호출되지 않는다", async () => {
+    jest.useFakeTimers();
+    (api.fetchUsers as jest.Mock).mockResolvedValueOnce(mockUsers);
+    (api.addUser as jest.Mock).mockResolvedValue({}); // 호출되면 안 됨
+
+    renderHome();
+    await screen.findByText("이지은");
+
+    // 모달 열기
+    fireEvent.click(screen.getByRole("button", { name: /사용자 추가/i }));
+    await act(async () => {
+      jest.advanceTimersByTime(20);
+    });
+
+    const dialog = await screen.findByRole("dialog");
+
+    // 일부만 입력 (이름만 입력)
+    fireEvent.change(within(dialog).getByLabelText("이름"), {
+      target: { value: "홍길동" },
+    });
+
+    // 구현에 따라 '추가' 비활성일 수 있음. 비활성이라면 클릭이 안 되므로 그대로 OK
+    const addBtn = within(dialog).getByRole("button", { name: /^추가$/ });
+
+    // 비활성 우선 검사
+    if (
+      addBtn.hasAttribute("disabled") ||
+      (addBtn as HTMLButtonElement).disabled
+    ) {
+      // 비활성 상태라면 클릭 시도 없이 addUser가 호출되지 않았음을 보장
+      expect(api.addUser).not.toHaveBeenCalled();
+    } else {
+      // 혹시 활성이라도, 클릭해도 addUser가 절대 호출되면 안 된다
+      await act(async () => {
+        fireEvent.click(addBtn);
+        jest.advanceTimersByTime(100);
+      });
+      expect(api.addUser).not.toHaveBeenCalled();
+    }
+
+    // (선택) 에러 메시지 강제: 구현에서 에러 문구를 반드시 보여주게 했다면 이 중 하나 매칭되도록 강하게 체크
+    const emailError = within(dialog).queryByText(
+      /이메일.*필수|이메일.*입력|email.*required/i
+    );
+    const phoneError = within(dialog).queryByText(
+      /전화.*필수|전화.*입력|phone.*required/i
+    );
+    const addrError = within(dialog).queryByText(
+      /주소.*필수|주소.*입력|age.*required/i
+    );
+    // 최소 하나는 떠야 하게 강제하려면:
+    expect(emailError || phoneError || addrError).toBeTruthy();
+
+    jest.useRealTimers();
+  });
+
+  test("❌ 이메일 형식이 잘못되면: '추가' 클릭해도 addUser가 호출되지 않는다", async () => {
+    jest.useFakeTimers();
+    (api.fetchUsers as jest.Mock).mockResolvedValueOnce(mockUsers);
+    (api.addUser as jest.Mock).mockResolvedValue({}); // 호출되면 안 됨
+
+    renderHome();
+    await screen.findByText("이지은");
+
+    fireEvent.click(screen.getByRole("button", { name: /사용자 추가/i }));
+    await act(async () => {
+      jest.advanceTimersByTime(20);
+    });
+
+    const dialog = await screen.findByRole("dialog");
+
+    // 모든 필수값 입력하되 이메일만 잘못된 형식
+    fireEvent.change(within(dialog).getByLabelText("이름"), {
+      target: { value: "홍길동" },
+    });
+    fireEvent.change(within(dialog).getByLabelText("이메일"), {
+      target: { value: "not-an-email" },
+    });
+    fireEvent.change(within(dialog).getByLabelText("전화번호"), {
+      target: { value: "010-0000-0000" },
+    });
+    fireEvent.change(within(dialog).getByLabelText("주소"), {
+      target: { value: "서울시 강남구" },
+    });
+    fireEvent.change(within(dialog).getByLabelText("역할"), {
+      target: { value: "user" },
+    });
+
+    const addBtn = within(dialog).getByRole("button", { name: /^추가$/ });
+
+    // 버튼이 비활성이어야 이상적이지만, 혹시 활성이어도 클릭 시 addUser 호출되면 안 됨
+    await act(async () => {
+      fireEvent.click(addBtn);
+      jest.advanceTimersByTime(100);
+    });
+    expect(api.addUser).not.toHaveBeenCalled();
+
+    // 에러 메시지는 반드시 떠야 통과 (강제)
+    expect(
+      within(dialog).getByText(/이메일.*형식|유효한 이메일|invalid email/i)
+    ).toBeInTheDocument();
 
     jest.useRealTimers();
   });

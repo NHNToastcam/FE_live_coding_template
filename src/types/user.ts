@@ -4,6 +4,6 @@ export type User = {
   email: string;
   role: string;
   phone: string;
-  address: string;
+  age: number;
   createdAt: string; // ISO String
 };

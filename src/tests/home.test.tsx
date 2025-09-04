@@ -22,7 +22,7 @@ const mockUsers = [
     email: "jieun@example.com",
     role: "user",
     phone: "010-9876-5432",
-    address: "서울특별시 마포구 월드컵북로 456",
+    age: 25,
     createdAt: "2025-01-15T15:30:00.000Z",
   },
   {
@@ -31,7 +31,7 @@ const mockUsers = [
     email: "chulsoo@example.com",
     role: "editor",
     phone: "010-5555-0000",
-    address: "경기도 성남시 분당구 판교로 789",
+    age: 35,
     createdAt: "2025-02-20T09:10:00.000Z",
   },
 ];

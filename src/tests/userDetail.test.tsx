@@ -12,7 +12,7 @@ const user = {
   email: "chulsoo@example.com",
   role: "editor",
   phone: "010-5555-0000",
-  address: "경기도 성남시 분당구 판교로 789",
+  age: 30,
   createdAt: "2025-02-20T09:10:00.000Z",
 };
 
